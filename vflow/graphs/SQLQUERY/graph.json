@@ -1,0 +1,205 @@
+{
+    "description": "SQLQUERY",
+    "processes": {
+        "structuredfileconsumer1": {
+            "component": "com.sap.storage.consumer.v2",
+            "metadata": {
+                "label": "Structured File Consumer",
+                "x": 104,
+                "y": 131,
+                "height": 80,
+                "width": 120,
+                "extensible": false,
+                "generation": 1,
+                "config": {
+                    "service": "SDL",
+                    "serviceConnection": {
+                        "configurationType": "Configuration Manager",
+                        "connectionID": "DI_DATA_LAKE"
+                    },
+                    "source": {
+                        "remoteObjectReference": {
+                            "connection": {
+                                "id": "DI_DATA_LAKE",
+                                "type": "SDL"
+                            },
+                            "name": "Find_active_customer_Cumulative__data.csv",
+                            "remoteObjectType": "FILE.CSV",
+                            "qualifiedName": "/shared/ZDEMO/Find_active_customer_Cumulative__data.csv",
+                            "nativeQualifiedName": "/shared/ZDEMO/Find_active_customer_Cumulative__data.csv",
+                            "owner": "nobody",
+                            "size": 2137,
+                            "version": {
+                                "dataLastModified": 1669791348000,
+                                "metadataLastModified": 1669791348000,
+                                "metadataVersionNumber": 1669791348000
+                            }
+                        },
+                        "dataAccessConfiguration": {
+                            "rowDelimiter": "\r\n",
+                            "charset": "ISO-8859-1",
+                            "textDelimiter": "\"",
+                            "header": true,
+                            "escapeCharacter": "\"",
+                            "colDelimiter": ","
+                        },
+                        "schema": {
+                            "genericType": "TABLE",
+                            "tableBasedRepresentation": {
+                                "attributes": []
+                            }
+                        },
+                        "capabilityProperties": [
+                            {
+                                "name": "isProfileable",
+                                "value": "true"
+                            }
+                        ],
+                        "filter": {
+                            "selectOptions": []
+                        }
+                    },
+                    "failOnStringTruncation": true
+                },
+                "outports": [
+                    {
+                        "name": "outTable",
+                        "type": "table",
+                        "vtype-ID": "$GRAPH.generated.structuredfileconsumer1_outTable"
+                    }
+                ]
+            }
+        },
+        "workflowterminator1": {
+            "component": "com.sap.dh.terminator",
+            "metadata": {
+                "label": "Workflow Terminator",
+                "x": 685,
+                "y": 141,
+                "height": 80,
+                "width": 120,
+                "generation": 1,
+                "config": {},
+                "additionalinports": [
+                    {
+                        "name": "input1",
+                        "type": "message"
+                    }
+                ]
+            }
+        },
+        "tabletomessageconverter1": {
+            "component": "com.sap.util.tableToMessageConverter",
+            "metadata": {
+                "label": "Table To Message Converter",
+                "x": 522.5,
+                "y": -31,
+                "height": 50,
+                "width": 50,
+                "extensible": false,
+                "generation": 1,
+                "config": {}
+            }
+        },
+        "sqlconsumer1": {
+            "component": "com.sap.database.sql.consumer.v2",
+            "metadata": {
+                "label": "SQL Consumer",
+                "x": 463,
+                "y": 150,
+                "height": 80,
+                "width": 120,
+                "extensible": false,
+                "generation": 1,
+                "config": {
+                    "service": "HANA_DB",
+                    "partitionType": "None",
+                    "serviceConnection": {
+                        "configurationType": "Configuration Manager",
+                        "connectionID": "BD1DB"
+                    },
+                    "source": {
+                        "description": "",
+                        "remoteObjectReference": {
+                            "connection": {
+                                "id": "",
+                                "type": ""
+                            },
+                            "qualifiedName": "",
+                            "remoteObjectType": ""
+                        },
+                        "schema": {
+                            "genericType": "TABLE",
+                            "tableBasedRepresentation": {
+                                "attributes": []
+                            }
+                        }
+                    }
+                },
+                "outports": [
+                    {
+                        "name": "outTable",
+                        "type": "table",
+                        "vtype-ID": "$GRAPH.generated.sqlconsumer1_outTable"
+                    }
+                ]
+            }
+        },
+        "tabletomessageconverter2": {
+            "component": "com.sap.util.tableToMessageConverter",
+            "metadata": {
+                "label": "Table To Message Converter",
+                "x": 282.5,
+                "y": 111,
+                "height": 50,
+                "width": 50,
+                "extensible": false,
+                "generation": 1,
+                "config": {},
+                "inports": [
+                    {
+                        "name": "inTable",
+                        "type": "table",
+                        "isPropagated": true,
+                        "vtype-ID": "$GRAPH.generated.structuredfileconsumer1_outTable"
+                    }
+                ]
+            }
+        }
+    },
+    "groups": [],
+    "connections": [
+        {
+            "metadata": {
+                "points": "209,171 252.75,171 252.75,136 296.5,136"
+            },
+            "src": {
+                "port": "outTable",
+                "process": "structuredfileconsumer1"
+            },
+            "tgt": {
+                "port": "inTable",
+                "process": "tabletomessageconverter2"
+            }
+        },
+        {
+            "metadata": {
+                "points": "336.5,136 397.25,136 397.25,190 458,190"
+            },
+            "src": {
+                "port": "outMessage",
+                "process": "tabletomessageconverter2"
+            },
+            "tgt": {
+                "port": "inTrigger",
+                "process": "sqlconsumer1"
+            }
+        }
+    ],
+    "inports": {},
+    "outports": {},
+    "properties": {},
+    "metadata": {
+        "generation": 1
+    }
+}

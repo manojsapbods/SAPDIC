@@ -1,0 +1,12 @@
+{
+    "description": "FIlter1",
+    "processes": {},
+    "groups": [],
+    "connections": [],
+    "inports": {},
+    "outports": {},
+    "properties": {},
+    "metadata": {
+        "generation": 1
+    }
+}

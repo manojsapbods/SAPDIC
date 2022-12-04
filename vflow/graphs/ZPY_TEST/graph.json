@@ -1,0 +1,100 @@
+{
+    "properties": {},
+    "icon": "",
+    "iconsrc": "",
+    "description": "ZPY_TEST",
+    "processes": {
+        "jupyter1": {
+            "component": "com.sap.jupyter",
+            "metadata": {
+                "label": "Jupyter",
+                "x": 292,
+                "y": 84,
+                "height": 80,
+                "width": 120,
+                "extensible": true,
+                "generation": 1,
+                "ui": "dynpath",
+                "config": {
+                    "notebookFilePath": "ping",
+                    "productive": true
+                },
+                "additionalinports": [
+                    {
+                        "name": "input",
+                        "type": "string"
+                    }
+                ],
+                "additionaloutports": [
+                    {
+                        "name": "out",
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "wiretap1": {
+            "component": "com.sap.util.wiretap",
+            "metadata": {
+                "label": "Wiretap",
+                "x": 539,
+                "y": 84,
+                "height": 80,
+                "width": 120,
+                "generation": 1,
+                "ui": "dynpath",
+                "config": {}
+            }
+        },
+        "constantgenerator1": {
+            "component": "com.sap.util.constantGenerator",
+            "metadata": {
+                "label": "Constant Generator",
+                "x": 45,
+                "y": 99,
+                "height": 80,
+                "width": 120,
+                "extensible": true,
+                "generation": 1,
+                "config": {
+                    "content": "foo",
+                    "mode": "pulse"
+                }
+            }
+        }
+    },
+    "groups": [],
+    "connections": [
+        {
+            "metadata": {
+                "points": "416,124 534,124"
+            },
+            "src": {
+                "port": "out",
+                "process": "jupyter1"
+            },
+            "tgt": {
+                "port": "in",
+                "process": "wiretap1"
+            }
+        },
+        {
+            "metadata": {
+                "points": "169,139 228,139 228,124 287,124"
+            },
+            "src": {
+                "port": "out",
+                "process": "constantgenerator1"
+            },
+            "tgt": {
+                "port": "input",
+                "process": "jupyter1"
+            }
+        }
+    ],
+    "inports": {},
+    "outports": {},
+    "metadata": {
+        "generation": 1
+    }
+}

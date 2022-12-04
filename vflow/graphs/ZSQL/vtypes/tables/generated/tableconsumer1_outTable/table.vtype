@@ -1,0 +1,51 @@
+{
+	"name": "generated.tableconsumer1_outTable",
+	"description": "auto-generated generated.tableconsumer1_outTable",
+	"vflow.type": "table",
+	"rows": {
+		"components": [
+			{
+				"Date": {
+					"vflow.type": "scalar",
+					"vtype-ID": "com.sap.core.date"
+				}
+			},
+			{
+				"Plant Loations": {
+					"vflow.type": "scalar",
+					"vtype-ID": "$GRAPH.generated.string_5000"
+				}
+			},
+			{
+				"PO": {
+					"vflow.type": "scalar",
+					"vtype-ID": "com.sap.core.int64"
+				}
+			},
+			{
+				"PRD Acc": {
+					"vflow.type": "scalar",
+					"vtype-ID": "com.sap.core.int64"
+				}
+			},
+			{
+				"Supplier": {
+					"vflow.type": "scalar",
+					"vtype-ID": "$GRAPH.generated.string_5000"
+				}
+			},
+			{
+				"Matarial Code": {
+					"vflow.type": "scalar",
+					"vtype-ID": "com.sap.core.int64"
+				}
+			},
+			{
+				"Reason for Variance": {
+					"vflow.type": "scalar",
+					"vtype-ID": "$GRAPH.generated.string_5000"
+				}
+			}
+		]
+	}
+}

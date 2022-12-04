@@ -1,0 +1,165 @@
+{
+    "description": "ZSQL",
+    "processes": {
+        "workflowtrigger1": {
+            "component": "com.sap.dh.trigger",
+            "metadata": {
+                "label": "Workflow Trigger",
+                "x": 12,
+                "y": 12,
+                "height": 80,
+                "width": 120,
+                "extensible": true,
+                "generation": 1,
+                "config": {}
+            }
+        },
+        "tableconsumer1": {
+            "component": "com.sap.database.table.consumer.v2",
+            "metadata": {
+                "label": "Table Consumer",
+                "x": 181,
+                "y": 12,
+                "height": 80,
+                "width": 120,
+                "extensible": false,
+                "generation": 1,
+                "config": {
+                    "service": "HANA_DB",
+                    "partitionType": "None",
+                    "serviceConnection": {
+                        "configurationType": "Configuration Manager",
+                        "connectionID": "DWC"
+                    },
+                    "source": {
+                        "remoteObjectReference": {
+                            "connection": {
+                                "id": "DWC",
+                                "type": "HANA_DB"
+                            },
+                            "name": "ACQ_PPV_DATA",
+                            "remoteObjectType": "VIEW",
+                            "qualifiedName": "/DIC/ACQ_PPV_DATA",
+                            "nativeQualifiedName": "\"DIC\".\"ACQ_PPV_DATA\"",
+                            "owner": "DIC"
+                        },
+                        "schema": {
+                            "genericType": "TABLE",
+                            "tableBasedRepresentation": {
+                                "attributes": []
+                            }
+                        },
+                        "capabilityProperties": [
+                            {
+                                "name": "isProfileable",
+                                "value": "true"
+                            }
+                        ],
+                        "filter": {
+                            "selectOptions": [
+                                {
+                                    "name": "PO",
+                                    "elements": [
+                                        {
+                                            "comparison": "=",
+                                            "low": "'45654'"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                },
+                "outports": [
+                    {
+                        "name": "outTable",
+                        "type": "table",
+                        "vtype-ID": "$GRAPH.generated.tableconsumer1_outTable"
+                    }
+                ]
+            }
+        },
+        "tabletomessageconverter1": {
+            "component": "com.sap.util.tableToMessageConverter",
+            "metadata": {
+                "label": "Table To Message Converter",
+                "x": 350,
+                "y": 27,
+                "height": 50,
+                "width": 50,
+                "extensible": false,
+                "generation": 1,
+                "config": {},
+                "inports": [
+                    {
+                        "name": "inTable",
+                        "type": "table",
+                        "isPropagated": true,
+                        "vtype-ID": "$GRAPH.generated.tableconsumer1_outTable"
+                    }
+                ]
+            }
+        },
+        "wiretap1": {
+            "component": "com.sap.util.wiretap",
+            "metadata": {
+                "label": "Wiretap",
+                "x": 449,
+                "y": 12,
+                "height": 80,
+                "width": 120,
+                "generation": 1,
+                "ui": "dynpath",
+                "config": {}
+            }
+        }
+    },
+    "groups": [],
+    "connections": [
+        {
+            "metadata": {
+                "points": "136,52 176,52"
+            },
+            "src": {
+                "port": "output",
+                "process": "workflowtrigger1"
+            },
+            "tgt": {
+                "port": "inTrigger",
+                "process": "tableconsumer1"
+            }
+        },
+        {
+            "metadata": {
+                "points": "305,52 345,52"
+            },
+            "src": {
+                "port": "outTable",
+                "process": "tableconsumer1"
+            },
+            "tgt": {
+                "port": "inTable",
+                "process": "tabletomessageconverter1"
+            }
+        },
+        {
+            "metadata": {
+                "points": "404,52 444,52"
+            },
+            "src": {
+                "port": "outMessage",
+                "process": "tabletomessageconverter1"
+            },
+            "tgt": {
+                "port": "in",
+                "process": "wiretap1"
+            }
+        }
+    ],
+    "inports": {},
+    "outports": {},
+    "properties": {},
+    "metadata": {
+        "generation": 1
+    }
+}

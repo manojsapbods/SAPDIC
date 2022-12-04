@@ -1,0 +1,186 @@
+{
+    "iconsrc": "",
+    "icon": "",
+    "properties": {},
+    "description": "ZPY_TEST",
+    "processes": {
+        "readfile21": {
+            "component": "com.sap.file.read",
+            "metadata": {
+                "label": "Read Input File",
+                "x": -1367,
+                "y": -365,
+                "height": 80,
+                "width": 120,
+                "config": {
+                    "mode": "Once",
+                    "path": "/shared/ZDEMO/past_date.csv",
+                    "connection": {
+                        "configurationType": "Connection Management",
+                        "connectionID": "DI_DATA_LAKE"
+                    }
+                }
+            },
+            "name": "readfile2"
+        },
+        "fromfile11": {
+            "component": "com.sap.file.fromFile",
+            "metadata": {
+                "label": "From File",
+                "x": -1168.0000009536743,
+                "y": -424,
+                "height": 50,
+                "width": 50,
+                "config": {}
+            },
+            "name": "fromfile1"
+        },
+        "tofile11": {
+            "component": "com.sap.file.toFile",
+            "metadata": {
+                "label": "To File",
+                "x": -910.000002861023,
+                "y": -365,
+                "height": 50,
+                "width": 50,
+                "config": {}
+            },
+            "name": "tofile1"
+        },
+        "writefile21": {
+            "component": "com.sap.file.write",
+            "metadata": {
+                "label": "Write Results File",
+                "x": -874.000002861023,
+                "y": -504,
+                "height": 80,
+                "width": 120,
+                "config": {
+                    "pathMode": "Static (from configuration)",
+                    "mode": "Create only",
+                    "connection": {
+                        "configurationType": "Connection Management",
+                        "connectionID": "DI_DATA_LAKE"
+                    },
+                    "path": "/shared/ZDEMO/result123.csv"
+                }
+            },
+            "name": "writefile2"
+        },
+        "graphterminator11": {
+            "component": "com.sap.util.graphTerminator",
+            "metadata": {
+                "label": "Graph Terminator",
+                "x": -698.0000038146973,
+                "y": -374,
+                "height": 80,
+                "width": 120,
+                "config": {}
+            },
+            "name": "graphterminator1"
+        },
+        "python3operator1": {
+            "component": "com.sap.system.python3Operator",
+            "metadata": {
+                "label": "Python3 Operator",
+                "x": -1132,
+                "y": -558,
+                "height": 80,
+                "width": 120,
+                "extensible": true,
+                "filesRequired": [
+                    "script.py"
+                ],
+                "generation": 1,
+                "config": {
+                    "script": "import io\nimport csv\nimport os\nimport pandas as pd\nfrom datetime import date,timedelta\nfrom dateutil.relativedelta import relativedelta\ndef get_last18_months_date():\n    dates=[]\n    current_date = date.today()\n    for d in range(0,18):\n        month_date = current_date- relativedelta(months=d)\n        month=str(month_date.year)+\"-\"+str(month_date.month)\n        dates.append(month)\n    return dates\nimport pandas as pd\ndef filter_file(file1):\n    dates=get_last18_months_date()\n    file1['transdatemonth'] = file1['transdatemonth'].astype(\"string\")\n    file1['tran_years'] = file1['tran_years'].astype(\"string\")\n    file1[\"month_year\"]=file1[\"tran_years\"]+\"-\"+file1[\"transdatemonth\"]\n    df=file1.loc[file1[\"month_year\"].isin(dates)]\n    df=df.drop(\"month_year\",axis=1)\n#     print(\"scdsdc\",df)\n    return df\ndef on_input(msg):\n    result = \"\"\n    inter_row = {}\n    \n    stream = io.StringIO(msg.body.decode(\"utf-8\"))\n    data=pd.read_csv(stream)\n    # data = csv.DictReader(f, delimiter=\",\")\n    df=filter_file(data)\n    \n    api.send(\"out\", api.Message(attributes=msg.attributes, body=df.to_csv(index=False,header=True)))\n\napi.set_port_callback(\"input1\", on_input)\n"
+                },
+                "additionalinports": [
+                    {
+                        "name": "input1",
+                        "type": "message"
+                    }
+                ],
+                "additionaloutports": [
+                    {
+                        "name": "out",
+                        "type": "message"
+                    }
+                ]
+            }
+        }
+    },
+    "groups": [],
+    "connections": [
+        {
+            "metadata": {
+                "points": "-1243,-334 -1208,-334 -1208,-399 -1173.0000009536743,-399"
+            },
+            "src": {
+                "port": "file",
+                "process": "readfile21"
+            },
+            "tgt": {
+                "port": "file",
+                "process": "fromfile11"
+            }
+        },
+        {
+            "metadata": {
+                "points": "-856.000002861023,-340 -806,-340 -806,-402 -929,-402 -929,-464 -879.000002861023,-464"
+            },
+            "src": {
+                "port": "file",
+                "process": "tofile11"
+            },
+            "tgt": {
+                "port": "file",
+                "process": "writefile21"
+            }
+        },
+        {
+            "metadata": {
+                "points": "-750.000002861023,-473 -726.5,-473 -726.5,-334 -703.0000038146973,-334"
+            },
+            "src": {
+                "port": "file",
+                "process": "writefile21"
+            },
+            "tgt": {
+                "port": "stop",
+                "process": "graphterminator11"
+            }
+        },
+        {
+            "metadata": {
+                "points": "-1114.0000009536743,-390 -1064,-390 -1064,-454 -1187,-454 -1187,-518 -1137,-518"
+            },
+            "src": {
+                "port": "message",
+                "process": "fromfile11"
+            },
+            "tgt": {
+                "port": "input1",
+                "process": "python3operator1"
+            }
+        },
+        {
+            "metadata": {
+                "points": "-1008,-518 -961.5,-518 -961.5,-331 -915.000002861023,-331"
+            },
+            "src": {
+                "port": "out",
+                "process": "python3operator1"
+            },
+            "tgt": {
+                "port": "in",
+                "process": "tofile11"
+            }
+        }
+    ],
+    "inports": {},
+    "outports": {},
+    "metadata": {
+        "generation": 1
+    }
+}

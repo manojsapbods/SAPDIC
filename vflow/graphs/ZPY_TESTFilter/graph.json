@@ -1,0 +1,443 @@
+{
+    "iconsrc": "",
+    "icon": "",
+    "description": "ZPY_TESTFilter",
+    "processes": {
+        "readfile211": {
+            "component": "com.sap.file.read",
+            "metadata": {
+                "label": "Read Input File",
+                "x": -1758,
+                "y": -522,
+                "height": 80,
+                "width": 120,
+                "config": {
+                    "mode": "Once",
+                    "path": "/shared/ZDEMO/Cust_files/Cust_file11.csv",
+                    "connection": {
+                        "configurationType": "Connection Management",
+                        "connectionID": "DI_DATA_LAKE"
+                    }
+                }
+            },
+            "name": "readfile21"
+        },
+        "fromfile111": {
+            "component": "com.sap.file.fromFile",
+            "metadata": {
+                "label": "From File",
+                "x": -1672.0000009536743,
+                "y": -597,
+                "height": 50,
+                "width": 50,
+                "config": {}
+            },
+            "name": "fromfile11"
+        },
+        "tofile111": {
+            "component": "com.sap.file.toFile",
+            "metadata": {
+                "label": "To File",
+                "x": -1107.000002861023,
+                "y": -585,
+                "height": 50,
+                "width": 50,
+                "config": {}
+            },
+            "name": "tofile11"
+        },
+        "writefile211": {
+            "component": "com.sap.file.write",
+            "metadata": {
+                "label": "Write Results File",
+                "x": -965.000002861023,
+                "y": -591,
+                "height": 80,
+                "width": 120,
+                "config": {
+                    "pathMode": "Static (from configuration)",
+                    "mode": "Overwrite",
+                    "connection": {
+                        "configurationType": "Connection Management",
+                        "connectionID": "DI_DATA_LAKE"
+                    },
+                    "path": "/shared/ZDEMO/Cust_files/result_Cust_file.csv"
+                }
+            },
+            "name": "writefile21"
+        },
+        "graphterminator111": {
+            "component": "com.sap.util.graphTerminator",
+            "metadata": {
+                "label": "Graph Terminator",
+                "x": -769.0000038146973,
+                "y": -468,
+                "height": 80,
+                "width": 120,
+                "config": {}
+            },
+            "name": "graphterminator11"
+        },
+        "python3operator1": {
+            "component": "com.sap.system.python3Operator",
+            "metadata": {
+                "label": "Python3 Operator",
+                "x": -1555,
+                "y": -617,
+                "height": 80,
+                "width": 120,
+                "extensible": true,
+                "filesRequired": [
+                    "script.py"
+                ],
+                "generation": 1,
+                "config": {
+                    "script": "import json\nimport pandas as pd\nimport io\nconditions=[\"==\",\">=\",\"<=\",\"!=\",\"and\",\"or\"]\n# data = open(\"filer.json\")\ndata={\n    \"filters\":\n    [\n    \n        {\n            \"columns\":\"customer_id\",\n            \"condition\":\"!=\",\n            \"value\":\"1009\"\n        }\n    ]\n}\n# filters=json.load(data)\nfilters=data['filters']\ndef check_validations(cols):\n    check_syn=0\n    correct=[]\n    for i in filters:\n        if i[\"columns\"] in cols and i['condition'] in conditions:\n            check_syn=check_syn+1\n            correct.append(i)\n    if len(filters)!=check_syn:\n        raise Exception(\"Filter error\")\ndef on_input(msg):\n    stream = io.StringIO(msg.body.decode(\"utf-8\"))\n    # stream = io.StringIO(msg.body.decode(\"utf-8\"))\n    df=pd.read_csv(stream)\n    df.columns=df.columns.str.replace(' ', '_')\n    df.columns = df.columns.str.strip()\n    df.columns = df.columns.str.rstrip()\n    cols=list(df.columns)\n    check_validations(cols)\n    if filters:\n        query = ' and '.join([f'{a[\"columns\"]} {a[\"condition\"]} {a[\"value\"]}' for a in filters])\n        ff=df.query(query)\n        api.send(\"out\", api.Message(attributes=msg.attributes, body=ff.to_csv(index=False,header=True)))\n    else:\n        api.send(\"out\", api.Message(attributes=msg.attributes, body=df.to_csv(index=False,header=True)))\n    \napi.set_port_callback(\"file\", on_input)\n\n\n"
+                },
+                "additionalinports": [
+                    {
+                        "name": "file",
+                        "type": "message"
+                    }
+                ],
+                "additionaloutports": [
+                    {
+                        "name": "out",
+                        "type": "message"
+                    },
+                    {
+                        "name": "error",
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "python3operator11": {
+            "component": "com.sap.system.python3Operator",
+            "metadata": {
+                "label": "Python3 Operator",
+                "x": -1316,
+                "y": -609,
+                "height": 80,
+                "width": 120,
+                "extensible": true,
+                "filesRequired": [
+                    "script.py"
+                ],
+                "generation": 1,
+                "config": {
+                    "script": "import json\nimport pandas as pd\nimport io\nconditions=[\"==\",\">=\",\"<=\",\"!=\",\"and\",\"or\"]\n# data = open(\"filer.json\")\ndata={\n    \"filters\":\n    [\n    \n        {\n            \"columns\":\"customer_id\",\n            \"condition\":\"==\",\n            \"value\":\"1008\"\n        }\n    ]\n}\n# filters=json.load(data)\nfilters=data['filters']\ndef check_validations(cols):\n    check_syn=0\n    correct=[]\n    for i in filters:\n        if i[\"columns\"] in cols and i['condition'] in conditions:\n            check_syn=check_syn+1\n            correct.append(i)\n    if len(filters)!=check_syn:\n        raise Exception(\"Filter error\")\ndef on_input(msg):\n    stream = io.StringIO(msg.body)\n    df=pd.read_csv(stream)\n    df.columns=df.columns.str.replace(' ', '_')\n    df.columns = df.columns.str.strip()\n    df.columns = df.columns.str.rstrip()\n    cols=list(df.columns)\n    check_validations(cols)\n    if filters:\n        query = ' and '.join([f'{a[\"columns\"]} {a[\"condition\"]} {a[\"value\"]}' for a in filters])\n        ff=df.query(query)\n        api.send(\"out\", api.Message(attributes=msg.attributes, body=ff.to_csv(index=False,header=True)))\n    else:\n        api.send(\"out\", api.Message(attributes=msg.attributes, body=df.to_csv(index=False,header=True)))\n    \napi.set_port_callback(\"file\", on_input)\n\n\n"
+                },
+                "additionalinports": [
+                    {
+                        "name": "file",
+                        "type": "message"
+                    }
+                ],
+                "additionaloutports": [
+                    {
+                        "name": "out",
+                        "type": "message"
+                    },
+                    {
+                        "name": "error",
+                        "type": "string"
+                    }
+                ]
+            },
+            "name": "python3operator1"
+        },
+        "readfile2111": {
+            "component": "com.sap.file.read",
+            "metadata": {
+                "label": "Read Input File",
+                "x": -1725,
+                "y": -343,
+                "height": 80,
+                "width": 120,
+                "config": {
+                    "mode": "Once",
+                    "path": "/shared/ZDEMO/Cust_files/Cust_file22.csv",
+                    "connection": {
+                        "configurationType": "Connection Management",
+                        "connectionID": "DI_DATA_LAKE"
+                    }
+                }
+            },
+            "name": "readfile211"
+        },
+        "fromfile1111": {
+            "component": "com.sap.file.fromFile",
+            "metadata": {
+                "label": "From File",
+                "x": -1607.0000009536743,
+                "y": -423,
+                "height": 50,
+                "width": 50,
+                "config": {}
+            },
+            "name": "fromfile111"
+        },
+        "python3operator12": {
+            "component": "com.sap.system.python3Operator",
+            "metadata": {
+                "label": "Python3 Operator",
+                "x": -1490,
+                "y": -423,
+                "height": 80,
+                "width": 120,
+                "extensible": true,
+                "filesRequired": [
+                    "script.py"
+                ],
+                "generation": 1,
+                "config": {
+                    "script": "import json\nimport pandas as pd\nimport io\nconditions=[\"==\",\">=\",\"<=\",\"!=\",\"and\",\"or\"]\n# data = open(\"filer.json\")\ndata={\n    \"filters\":\n    [\n    \n        {\n            \"columns\":\"customer_id\",\n            \"condition\":\"!=\",\n            \"value\":\"1009\"\n        }\n    ]\n}\n# filters=json.load(data)\nfilters=data['filters']\ndef check_validations(cols):\n    check_syn=0\n    correct=[]\n    for i in filters:\n        if i[\"columns\"] in cols and i['condition'] in conditions:\n            check_syn=check_syn+1\n            correct.append(i)\n    if len(filters)!=check_syn:\n        raise Exception(\"Filter error\")\ndef on_input(msg):\n    stream = io.StringIO(msg.body.decode(\"utf-8\"))\n    df=pd.read_csv(stream)\n    df.columns=df.columns.str.replace(' ', '_')\n    df.columns = df.columns.str.strip()\n    df.columns = df.columns.str.rstrip()\n    cols=list(df.columns)\n    check_validations(cols)\n    if filters:\n        query = ' and '.join([f'{a[\"columns\"]} {a[\"condition\"]} {a[\"value\"]}' for a in filters])\n        ff=df.query(query)\n        api.send(\"out\", api.Message(attributes=msg.attributes, body=ff.to_csv(index=False,header=True)))\n    else:\n        api.send(\"out\", api.Message(attributes=msg.attributes, body=df.to_csv(index=False,header=True)))\n    \napi.set_port_callback(\"file\", on_input)\n\n\n"
+                },
+                "additionalinports": [
+                    {
+                        "name": "file",
+                        "type": "message"
+                    }
+                ],
+                "additionaloutports": [
+                    {
+                        "name": "out",
+                        "type": "message"
+                    },
+                    {
+                        "name": "error",
+                        "type": "string"
+                    }
+                ]
+            },
+            "name": "python3operator1"
+        },
+        "python3operator111": {
+            "component": "com.sap.system.python3Operator",
+            "metadata": {
+                "label": "Python3 Operator",
+                "x": -1302,
+                "y": -414,
+                "height": 80,
+                "width": 120,
+                "extensible": true,
+                "filesRequired": [
+                    "script.py"
+                ],
+                "generation": 1,
+                "config": {
+                    "script": "import json\nimport pandas as pd\nimport io\nconditions=[\"==\",\">=\",\"<=\",\"!=\",\"and\",\"or\"]\n# data = open(\"filer.json\")\ndata={\n    \"filters\":\n    [\n    \n        {\n            \"columns\":\"customer_id\",\n            \"condition\":\"==\",\n            \"value\":\"1008\"\n        }\n    ]\n}\n# filters=json.load(data)\nfilters=data['filters']\ndef check_validations(cols):\n    check_syn=0\n    correct=[]\n    for i in filters:\n        if i[\"columns\"] in cols and i['condition'] in conditions:\n            check_syn=check_syn+1\n            correct.append(i)\n    if len(filters)!=check_syn:\n        raise Exception(\"Filter error\")\ndef on_input(msg):\n    stream = io.StringIO(msg.body)\n    df=pd.read_csv(stream)\n    df.columns=df.columns.str.replace(' ', '_')\n    df.columns = df.columns.str.strip()\n    df.columns = df.columns.str.rstrip()\n    cols=list(df.columns)\n    check_validations(cols)\n    if filters:\n        query = ' and '.join([f'{a[\"columns\"]} {a[\"condition\"]} {a[\"value\"]}' for a in filters])\n        ff=df.query(query)\n        api.send(\"out\", api.Message(attributes=msg.attributes, body=ff.to_csv(index=False,header=True)))\n    else:\n        api.send(\"out\", api.Message(attributes=msg.attributes, body=df.to_csv(index=False,header=True)))\n    \napi.set_port_callback(\"file\", on_input)\n\n\n"
+                },
+                "additionalinports": [
+                    {
+                        "name": "file",
+                        "type": "message"
+                    }
+                ],
+                "additionaloutports": [
+                    {
+                        "name": "out",
+                        "type": "message"
+                    },
+                    {
+                        "name": "error",
+                        "type": "string"
+                    }
+                ]
+            },
+            "name": "python3operator11"
+        },
+        "python3operator1111": {
+            "component": "com.sap.system.python3Operator",
+            "metadata": {
+                "label": "Python3 Operator",
+                "x": -1140,
+                "y": -477,
+                "height": 80,
+                "width": 120,
+                "extensible": true,
+                "filesRequired": [
+                    "script.py"
+                ],
+                "generation": 1,
+                "config": {
+                    "script": "import json\nimport pandas as pd\nimport io\nconditions=[\"==\",\">=\",\"<=\",\"!=\",\"and\",\"or\"]\n# data = open(\"filer.json\")\ndata={\n    \"columns\":\n    [\n    \n        \n        \"customerid\",\n        \"customerd\",\n        \"customerid\"\n        \n           \n        \n    ]\n}\nfilters=data['columns']\nfilters=list(set(filters))\ndef clean_file(df):\n    df.columns=df.columns.str.replace(' ', '')\n    df.columns = df.columns.str.strip()\n    df.columns = df.columns.str.lower()\n    return df\ndef validate(df,df1):\n    cols=list(df.columns)\n    cols1=list(df1.columns)\n    check_syn=0\n    correct=[]\n    for i in filters:\n        print(i)\n        if i in cols and i in cols1:\n            check_syn=check_syn+1\n            correct.append(i)\n    if len(filters)==check_syn:\n        print(\"Filter error\")\n    return correct\n# filters=json.load(data)\n\n\ndef on_input(msg,msg1):\n    stream = io.StringIO(msg.body)\n    stream1 = io.StringIO(msg1.body)\n    df=pd.read_csv(stream)\n    df1=pd.read_csv(stream1)\n    df=clean_file(df)\n    df1=clean_file(df1)\n    filters=validate(df,df1)\n    if filters: \n        df2=pd.merge(df,df1,on=filters)\n        api.send(\"out\", api.Message(attributes=msg.attributes, body=df2.to_csv(index=False,header=True)))\n    else:\n        api.send(\"out\", api.Message(attributes=msg.attributes, body=df.to_csv(index=False,header=True)))\n    \napi.set_port_callback([\"file\", \"input1\"], on_input)\n\n\n"
+                },
+                "additionalinports": [
+                    {
+                        "name": "file",
+                        "type": "message"
+                    },
+                    {
+                        "name": "input1",
+                        "type": "message"
+                    }
+                ],
+                "additionaloutports": [
+                    {
+                        "name": "out",
+                        "type": "message"
+                    },
+                    {
+                        "name": "error",
+                        "type": "string"
+                    }
+                ]
+            },
+            "name": "python3operator111"
+        }
+    },
+    "groups": [],
+    "connections": [
+        {
+            "metadata": {
+                "points": "-1634,-491 -1584,-491 -1584,-531.5 -1727,-531.5 -1727,-572 -1677.0000009536743,-572"
+            },
+            "src": {
+                "port": "file",
+                "process": "readfile211"
+            },
+            "tgt": {
+                "port": "file",
+                "process": "fromfile111"
+            }
+        },
+        {
+            "metadata": {
+                "points": "-1053.000002861023,-560 -1011.5,-560 -1011.5,-551 -970.000002861023,-551"
+            },
+            "src": {
+                "port": "file",
+                "process": "tofile111"
+            },
+            "tgt": {
+                "port": "file",
+                "process": "writefile211"
+            }
+        },
+        {
+            "metadata": {
+                "points": "-841.000002861023,-560 -807.5,-560 -807.5,-428 -774.0000038146973,-428"
+            },
+            "src": {
+                "port": "file",
+                "process": "writefile211"
+            },
+            "tgt": {
+                "port": "stop",
+                "process": "graphterminator111"
+            }
+        },
+        {
+            "metadata": {
+                "points": "-1618.0000009536743,-563 -1589,-563 -1589,-577 -1560,-577"
+            },
+            "src": {
+                "port": "message",
+                "process": "fromfile111"
+            },
+            "tgt": {
+                "port": "file",
+                "process": "python3operator1"
+            }
+        },
+        {
+            "metadata": {
+                "points": "-1431,-586 -1376,-586 -1376,-569 -1321,-569"
+            },
+            "src": {
+                "port": "out",
+                "process": "python3operator1"
+            },
+            "tgt": {
+                "port": "file",
+                "process": "python3operator11"
+            }
+        },
+        {
+            "metadata": {
+                "points": "-1601,-312 -1551,-312 -1551,-355 -1662,-355 -1662,-398 -1612.0000009536743,-398"
+            },
+            "src": {
+                "port": "file",
+                "process": "readfile2111"
+            },
+            "tgt": {
+                "port": "file",
+                "process": "fromfile1111"
+            }
+        },
+        {
+            "metadata": {
+                "points": "-1366,-392 -1336.5,-392 -1336.5,-374 -1307,-374"
+            },
+            "src": {
+                "port": "out",
+                "process": "python3operator12"
+            },
+            "tgt": {
+                "port": "file",
+                "process": "python3operator111"
+            }
+        },
+        {
+            "metadata": {
+                "points": "-1178,-383 -1161.5,-383 -1161.5,-428 -1145,-428"
+            },
+            "src": {
+                "port": "out",
+                "process": "python3operator111"
+            },
+            "tgt": {
+                "port": "input1",
+                "process": "python3operator1111"
+            }
+        },
+        {
+            "metadata": {
+                "points": "-1192,-578 -1168.5,-578 -1168.5,-446 -1145,-446"
+            },
+            "src": {
+                "port": "out",
+                "process": "python3operator11"
+            },
+            "tgt": {
+                "port": "file",
+                "process": "python3operator1111"
+            }
+        },
+        {
+            "metadata": {
+                "points": "-1016,-446 -966,-446 -966,-498.5 -1162,-498.5 -1162,-551 -1112.000002861023,-551"
+            },
+            "src": {
+                "port": "out",
+                "process": "python3operator1111"
+            },
+            "tgt": {
+                "port": "in",
+                "process": "tofile111"
+            }
+        },
+        {
+            "metadata": {
+                "points": "-1553.0000009536743,-389 -1524,-389 -1524,-383 -1495,-383"
+            },
+            "src": {
+                "port": "message",
+                "process": "fromfile1111"
+            },
+            "tgt": {
+                "port": "file",
+                "process": "python3operator12"
+            }
+        }
+    ],
+    "inports": {},
+    "outports": {},
+    "properties": {},
+    "metadata": {
+        "generation": 1
+    }
+}

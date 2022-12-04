@@ -1,0 +1,51 @@
+{
+	"name": "generated.structuredfileconsumer1_outTable",
+	"description": "auto-generated generated.structuredfileconsumer1_outTable",
+	"vflow.type": "table",
+	"rows": {
+		"components": [
+			{
+				"Customer": {
+					"vflow.type": "scalar",
+					"vtype-ID": "com.sap.core.int32"
+				}
+			},
+			{
+				"transdatemonth": {
+					"vflow.type": "scalar",
+					"vtype-ID": "com.sap.core.int32"
+				}
+			},
+			{
+				"tran_years": {
+					"vflow.type": "scalar",
+					"vtype-ID": "com.sap.core.int32"
+				}
+			},
+			{
+				"Currentmonth": {
+					"vflow.type": "scalar",
+					"vtype-ID": "com.sap.core.int32"
+				}
+			},
+			{
+				"current year": {
+					"vflow.type": "scalar",
+					"vtype-ID": "com.sap.core.int32"
+				}
+			},
+			{
+				"current date": {
+					"vflow.type": "scalar",
+					"vtype-ID": "$GRAPH.generated.string_10"
+				}
+			},
+			{
+				"cumbalance": {
+					"vflow.type": "scalar",
+					"vtype-ID": "com.sap.core.int32"
+				}
+			}
+		]
+	}
+}

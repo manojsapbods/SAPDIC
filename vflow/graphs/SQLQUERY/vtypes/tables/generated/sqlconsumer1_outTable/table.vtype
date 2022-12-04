@@ -1,0 +1,8 @@
+{
+	"name": "generated.sqlconsumer1_outTable",
+	"description": "auto-generated generated.sqlconsumer1_outTable",
+	"vflow.type": "table",
+	"rows": {
+		"components": []
+	}
+}

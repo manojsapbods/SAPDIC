@@ -1,0 +1,150 @@
+{
+    "description": "ZSQL_TEST",
+    "processes": {
+        "wiretap1": {
+            "component": "com.sap.util.wiretap",
+            "metadata": {
+                "label": "Wiretap",
+                "x": 166.99999904632568,
+                "y": -12,
+                "height": 80,
+                "width": 120,
+                "generation": 1,
+                "ui": "dynpath",
+                "config": {}
+            }
+        },
+        "structuredfileproducer1": {
+            "component": "com.sap.storage.producer.v2",
+            "metadata": {
+                "label": "Structured File Producer",
+                "x": -291,
+                "y": -28,
+                "height": 80,
+                "width": 120,
+                "extensible": false,
+                "generation": 1,
+                "config": {
+                    "service": "SDL",
+                    "serviceConnection": {
+                        "configurationType": "Configuration Manager",
+                        "connectionID": "DI_DATA_LAKE"
+                    },
+                    "source": {
+                        "remoteObjectReference": {
+                            "connection": {
+                                "id": "DI_DATA_LAKE",
+                                "type": "SDL"
+                            },
+                            "name": "Find_active_customer_Cumulative__data.csv",
+                            "remoteObjectType": "FILE.CSV",
+                            "qualifiedName": "/shared/ZDEMO/Find_active_customer_Cumulative__data.csv",
+                            "nativeQualifiedName": "/shared/ZDEMO/Find_active_customer_Cumulative__data.csv",
+                            "owner": "nobody",
+                            "size": 2137,
+                            "version": {
+                                "dataLastModified": 1669791348000,
+                                "metadataLastModified": 1669791348000,
+                                "metadataVersionNumber": 1669791348000
+                            }
+                        },
+                        "dataAccessConfiguration": {
+                            "rowDelimiter": "\r\n",
+                            "charset": "ISO-8859-1",
+                            "textDelimiter": "\"",
+                            "header": true,
+                            "escapeCharacter": "\"",
+                            "colDelimiter": ","
+                        },
+                        "schema": {
+                            "genericType": "TABLE",
+                            "tableBasedRepresentation": {
+                                "attributes": [
+                                    {
+                                        "name": "Customer",
+                                        "templateType": "int32",
+                                        "datatype": "INTEGER",
+                                        "length": 4
+                                    },
+                                    {
+                                        "name": "transdatemonth",
+                                        "templateType": "int32",
+                                        "datatype": "INTEGER",
+                                        "length": 4
+                                    },
+                                    {
+                                        "name": "tran_years",
+                                        "templateType": "int32",
+                                        "datatype": "INTEGER",
+                                        "length": 4
+                                    },
+                                    {
+                                        "name": "Currentmonth",
+                                        "templateType": "int32",
+                                        "datatype": "INTEGER",
+                                        "length": 4
+                                    },
+                                    {
+                                        "name": "current year",
+                                        "templateType": "int32",
+                                        "datatype": "INTEGER",
+                                        "length": 4
+                                    },
+                                    {
+                                        "name": "current date",
+                                        "templateType": "string",
+                                        "datatype": "STRING",
+                                        "length": 10
+                                    },
+                                    {
+                                        "name": "cumbalance",
+                                        "templateType": "int32",
+                                        "datatype": "INTEGER",
+                                        "length": 4
+                                    }
+                                ]
+                            }
+                        },
+                        "capabilityProperties": [
+                            {
+                                "name": "isProfileable",
+                                "value": "true"
+                            }
+                        ]
+                    },
+                    "format": "CSV",
+                    "mode": "overwrite",
+                    "additionalProperties_csv": {
+                        "columnDelimiter": ",",
+                        "csvHeaderIncluded": true
+                    },
+                    "writePartFiles": true,
+                    "attributeMappings": [],
+                    "partFileWriteMode": "append"
+                }
+            }
+        }
+    },
+    "groups": [],
+    "connections": [
+        {
+            "metadata": {
+                "points": "-167,12 -2.5,12 -2.5,28 161.99999904632568,28"
+            },
+            "src": {
+                "port": "outMessage",
+                "process": "structuredfileproducer1"
+            },
+            "tgt": {
+                "port": "in",
+                "process": "wiretap1"
+            }
+        }
+    ],
+    "inports": {},
+    "outports": {},
+    "properties": {},
+    "metadata": {
+        "generation": 1
+    }
+}

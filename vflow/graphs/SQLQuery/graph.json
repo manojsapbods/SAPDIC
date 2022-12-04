@@ -1,0 +1,82 @@
+{
+    "description": "query",
+    "processes": {
+        "structuredfileconsumer1": {
+            "component": "com.sap.storage.consumer.v2",
+            "metadata": {
+                "label": "Structured File Consumer",
+                "x": 107,
+                "y": 103,
+                "height": 80,
+                "width": 120,
+                "extensible": false,
+                "generation": 1,
+                "config": {
+                    "service": "SDL",
+                    "serviceConnection": {
+                        "configurationType": "Configuration Manager",
+                        "connectionID": "DI_DATA_LAKE"
+                    },
+                    "source": {
+                        "remoteObjectReference": {
+                            "connection": {
+                                "id": "DI_DATA_LAKE",
+                                "type": "SDL"
+                            },
+                            "name": "Find_active_customer_Cumulative__data.csv",
+                            "remoteObjectType": "FILE.CSV",
+                            "qualifiedName": "/shared/ZDEMO/Find_active_customer_Cumulative__data.csv",
+                            "nativeQualifiedName": "/shared/ZDEMO/Find_active_customer_Cumulative__data.csv",
+                            "owner": "nobody",
+                            "size": 2137,
+                            "version": {
+                                "dataLastModified": 1669791348000,
+                                "metadataLastModified": 1669791348000,
+                                "metadataVersionNumber": 1669791348000
+                            }
+                        },
+                        "dataAccessConfiguration": {
+                            "rowDelimiter": "\r\n",
+                            "charset": "ISO-8859-1",
+                            "textDelimiter": "\"",
+                            "header": true,
+                            "escapeCharacter": "\"",
+                            "colDelimiter": ","
+                        },
+                        "schema": {
+                            "genericType": "TABLE",
+                            "tableBasedRepresentation": {
+                                "attributes": []
+                            }
+                        },
+                        "capabilityProperties": [
+                            {
+                                "name": "isProfileable",
+                                "value": "true"
+                            }
+                        ],
+                        "filter": {
+                            "selectOptions": []
+                        }
+                    },
+                    "failOnStringTruncation": true
+                },
+                "outports": [
+                    {
+                        "name": "outTable",
+                        "type": "table",
+                        "vtype-ID": "$GRAPH.generated.structuredfileconsumer1_outTable"
+                    }
+                ]
+            }
+        }
+    },
+    "groups": [],
+    "connections": [],
+    "inports": {},
+    "outports": {},
+    "properties": {},
+    "metadata": {
+        "generation": 1
+    }
+}
